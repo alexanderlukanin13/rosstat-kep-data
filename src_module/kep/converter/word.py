@@ -1,26 +1,28 @@
 # -*- coding: utf-8 -*-
 """Dumps data from tables in Word document to csv file.
 
-Main call:
-folder_to_csv(data_folder, csv)
+Call:
+   folder_to_csv(data_folder, csv)
 
-API:
-https://msdn.microsoft.com/en-us/library/office/ff837519.aspx
+Reference:   
+    API:
+    https://msdn.microsoft.com/en-us/library/office/ff837519.aspx
 
-Examples:
-http://stackoverflow.com/questions/10366596/reading-table-contetnts-in-ms-word-file-using-python
+    Examples:
+    http://stackoverflow.com/questions/10366596/reading-table-contetnts-in-ms-word-file-using-python
 
-See also:
-https://python-docx.readthedocs.org/en/latest/
-"""
+    See also:
+    https://python-docx.readthedocs.org/en/latest/"""
 
 import win32com.client as win32
 import os
 
-try:
-    from .common import dump_iter_to_csv
-except (ImportError, SystemError):
-     from common import dump_iter_to_csv
+from ..io import dump_iter_to_csv
+
+#try:
+#    from .common import dump_iter_to_csv
+#except (ImportError, SystemError):
+#     from common import dump_iter_to_csv
           
      
 #______________________________________________________________________________
@@ -81,7 +83,7 @@ def get_filtered_cell_value(table, i, j):
 def get_cell_value(table, i, j):
     try:
        return table.Cell(Row = i, Column= j).Range.Text
-    # TODO: which specific exceptions can it throw?
+    # ISSUE: which specific exceptions can it throw?
     except Exception:
        return ""
     
@@ -118,22 +120,6 @@ def yield_continious_rows(p):
      
 #______________________________________________________________________________
 #
-#  Dump doc files to csv 
-#______________________________________________________________________________
-
-#def dump_table_to_csv(table, csv_filename):
-#    iterable = row_iter(table)   
-#    dump_iter_to_csv(iterable, csv_filename)
-
-#def dump_doc_to_single_csv_file(p):
-#    csv_filename = get_raw_csv_filename(p)
-#    many_rows_iter = yield_continious_rows(p)
-#    dump_iter_to_csv(many_rows_iter, csv_filename) 
-#    return csv_filename
-
-
-#______________________________________________________________________________
-#
 #  Folder-level batch job 
 #______________________________________________________________________________
 
@@ -163,12 +149,14 @@ def folder_to_csv(folder, csv_filename):
     file_list = make_file_list(folder)    
     c = dump_doc_files_to_csv(file_list, csv_filename)
     print("Finished creating raw CSV file", c)
+    
+def foo():
+    print(1)
         
 if __name__ == "__main__":
     data_folder = "../data/ind09/"   
     csv = data_folder + "tab.csv"
-    folder_to_csv(data_folder, csv)
-    
+    folder_to_csv(data_folder, csv)  
 
 
     

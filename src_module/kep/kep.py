@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from save import get_dfm
-from csv2db import import_csv
+from converter.word import foo 
+foo()
+
+# from save import get_dfm
+# from csv2db import import_csv
 
 
-import_csv("../data/ind09/")
-df = get_dfm()
-print(df.TRANS_rog.head())
+#import_csv("../data/ind09/")
+#df = get_dfm()
+#print(df.TRANS_rog.head())
 
 """
 в % к предыдущему периоду / percent of previous period																	

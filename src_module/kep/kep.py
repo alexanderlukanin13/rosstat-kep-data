@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from converter.word import foo 
+from src_module.kep.converter.word import foo
 foo()
 

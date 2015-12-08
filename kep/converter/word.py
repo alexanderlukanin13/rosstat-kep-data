@@ -2,28 +2,13 @@
 """Dumps data from tables in Word document to csv file.
 
 Call:
-   folder_to_csv(data_folder, csv)
-
-Reference:   
-    API:
-    https://msdn.microsoft.com/en-us/library/office/ff837519.aspx
-
-    Examples:
-    http://stackoverflow.com/questions/10366596/reading-table-contetnts-in-ms-word-file-using-python
-
-    See also:
-    https://python-docx.readthedocs.org/en/latest/"""
+   folder_to_csv(data_folder)
+"""
 
 import win32com.client as win32
 import os
 
 from kep.io import dump_iter_to_csv
-
-#try:
-#    from .common import dump_iter_to_csv
-#except (ImportError, SystemError):
-#     from common import dump_iter_to_csv
-          
      
 #______________________________________________________________________________
 #
@@ -37,8 +22,7 @@ def open_ms_word():
 
 def close_ms_word(app):
     app.Quit()
-    # ISSUE:
-    # must also quit somewhere by calling app.Quit() 
+    # ISSUE: must also quit somewhere by calling app.Quit() 
     # like in http://bytes.com/topic/python/answers/23946-closing-excel-application
 
 def open_doc(path, word):
@@ -131,10 +115,11 @@ def yield_rows_from_many_files(file_list):
         for row in yield_continious_rows(p):
             yield row
                 
-def dump_doc_files_to_csv(file_list, csv = None):
+def get_csv_filename(folder):
+    return os.path.join(folder, "tab.csv")
+				
+def dump_doc_files_to_csv(file_list, csv):
     """Write tables from .doc in *file_list* into one *csv* file. """
-    if csv is None:
-        csv = "tab.csv"
     folder_iter = yield_rows_from_many_files(file_list)
     dump_iter_to_csv(folder_iter, csv) 
     return csv        
@@ -143,20 +128,29 @@ def make_file_list(folder):
     files = ["tab.doc"] + ["tab%d.doc" % x for x in range(1,5)] 
     return [os.path.abspath(os.path.join(folder, fn)) for fn in files]        
 
-def folder_to_csv(folder, csv_filename):
+def folder_to_csv(folder):
     """Make single csv based on all STEI .doc files in *folder*. """    
     print ("\nFolder:\n    ", folder)
-    file_list = make_file_list(folder)    
-    c = dump_doc_files_to_csv(file_list, csv_filename)
-    print("Finished creating raw CSV file", c)
+    file_list = make_file_list(folder)
+    csv_filename = get_csv_filename(folder)     
+    dump_doc_files_to_csv(file_list, csv_filename)
+    print("Finished creating raw CSV file:", csv_filename)
     
 def foo():
     print(1)
         
 if __name__ == "__main__":
-    data_folder = "../data/ind09/"   
-    csv = data_folder + "tab.csv"
-    folder_to_csv(data_folder, csv)  
+    foo()
+    #data_folder = "../../data/ind09/"   
+    #folder_to_csv(data_folder)  
 
-
-    
+#______________________________________________________________________________
+#
+#  More info 
+#______________________________________________________________________________
+#  
+#   API:
+#   https://msdn.microsoft.com/en-us/library/office/ff837519.aspx
+#   Examples:
+#   http://stackoverflow.com/questions/10366596/reading-table-contetnts-in-ms-word-file-using-python
+#   

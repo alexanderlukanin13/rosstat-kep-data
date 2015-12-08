@@ -21,13 +21,13 @@ def get_filenames(data_folder):
 #  Root io functions with encoding 
 #------------------------------------------------------------------------------
 ENCODING = 'utf8' #'cp1251'
-	   
+       
 def w_open(file):
     return open(file, 'w', encoding = ENCODING)
 
 def r_open(file):
     return open(file, 'r', encoding = ENCODING)
-	
+    
 #------------------------------------------------------------------------------
 # CSV IO 
 #------------------------------------------------------------------------------
@@ -49,6 +49,7 @@ def yield_csv_rows(csv_filename):
         for row in spamreader:
             yield row
 
+            
 #------------------------------------------------------------------------------
 # Dump of test files in subfolder
 #------------------------------------------------------------------------------
@@ -65,12 +66,29 @@ def docstring_to_file(docstring, filename, subfolder = SUBFOLDER):
 # YAML import 
 #------------------------------------------------------------------------------
 
-import yaml 
+import yaml
+
+def test_yaml():
+    print(85)
+    
+def load_spec(filename):
+    """Returns specification  dictionaries. 
+    
+       YAML file structure (3 sections):    
+        # readers (very little lines)
+        -----
+        # units (a bit more lines)
+        -----
+        # headlines (many lines)"""
+    spec = _get_safe_yaml(filename)     
+    # depreciated_reader_dict = spec[0]    
+    unit_dict = spec[1]
+    headline_dict = spec[2]
+    return headline_dict, unit_dict
 
 def _get_yaml(filename):
     with r_open(filename) as file:
-        spec = yaml.load_all(file) 
-        return list(spec)   
+        return list(yaml.load_all(file))   
 
 def _get_safe_yaml(filename):        
     try:

@@ -1,10 +1,8 @@
-# -*- coding: utf8 -*-
-
-"""Read specification from yaml file. Specification relates raw CSV file headers/subheaders to variable names and is used as markup for reading raw CSV file."""
+# -*- coding: utf-8 -*-
 
 import yaml as ya
-from common import docstring_to_file
-from common import _get_safe_yaml
+from kep.io import docstring_to_file, _get_safe_yaml
+
 
 # Header labels
 doc_header = """1.7. Инвестиции в основной капитал :
@@ -57,39 +55,11 @@ def test_in_one_doc():
 def test_with_file():    
     filename = "_yaml_spec_sample.txt"
     p = docstring_to_file(yaml_doc, filename)
-    d1, d2, d3 = load_spec_from_yaml(p)
-    assert d1 == header_dict
-    assert d2 == unit_dict
-    assert d3 == reader_dict
     
     d1, d2 = load_spec(p)
     assert d1 == header_dict
     assert d2 == unit_dict
-
-########### Code itself: load_spec
-
-def load_spec(filename):
-    """Wrapper for load_spec_from_yaml()"""
-    headline_dict, support_dict, reader_dict = load_spec_from_yaml(filename)
-    return headline_dict, support_dict
-
-        
-def load_spec_from_yaml(filename):
-    """Returns specification as a tuple of dictionaries. 
-	
-       Unpacking:
-          header_dict, unit_dict, reader_dict = load_spec_from_yaml(filename)
-		  
-       YAML file structure (3 sections):    
-        # readers (very little lines)
-        -----
-        # units (a bit more lines)
-        -----
-        # headlines (many lines)"""
-		
-    spec = _get_safe_yaml(filename)     
-    return spec[2], spec[1], spec[0]
-    
+  
 if __name__ == "__main__":
     test_individial_docs_and_dicts()
     test_in_one_doc()

@@ -3,7 +3,8 @@
 
 import csv
 import os
- 
+
+
 def get_filenames(data_folder):
     csv  = os.path.join(data_folder, "tab.csv")
     spec = os.path.join(data_folder, "tab_spec.txt")
@@ -57,7 +58,8 @@ def yield_csv_rows(csv_filename):
 SUBFOLDER = "temp"
 
 def docstring_to_file(docstring, filename, subfolder = SUBFOLDER):
-    path = os.path.join(subfolder, filename)
+    #path = os.path.join(subfolder, filename)
+    path = filename
     with w_open(path) as f:
         f.write(docstring)
     return path

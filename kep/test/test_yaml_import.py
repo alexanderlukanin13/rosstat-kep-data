@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import yaml as ya
-from kep.io import docstring_to_file, _get_safe_yaml, load_spec
+from kep.io import docstring_to_file, load_spec
 
 # Header labels
 doc_header = """1.7. Инвестиции в основной капитал :

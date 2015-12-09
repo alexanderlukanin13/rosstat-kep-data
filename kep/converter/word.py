@@ -2,7 +2,7 @@
 """Dumps data from tables in Word document to csv file.
 
 Call:
-   folder_to_csv(data_folder)
+   make_csv(data_folder)
 """
 
 import win32com.client as win32
@@ -135,14 +135,12 @@ def folder_to_csv(folder):
     csv_filename = get_csv_filename(folder)     
     dump_doc_files_to_csv(file_list, csv_filename)
     print("Finished creating raw CSV file:", csv_filename)
-    
-def foo():
-    print(1)
-        
-if __name__ == "__main__":
-    foo()
-    #data_folder = "../../data/ind09/"   
-    #folder_to_csv(data_folder)  
+
+def make_csv(data_folder):
+    if os.path.exists(data_folder):  
+        folder_to_csv(data_folder)
+    else:
+        raise FileNotFoundError("We are in " + os.getcwd() + "\nCannot find " + data_folder)
 
 #______________________________________________________________________________
 #

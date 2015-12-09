@@ -9,13 +9,7 @@ Entry point:
       config_file   - segnment information: start rows, end rows, spec files by segment"""
 
 import os
-
-try: 
-    from load_spec import load_spec, _get_safe_yaml
-    from common import yield_csv_rows
-except (ImportError, SystemError):
-    from .load_spec import load_spec, _get_safe_yaml 
-    from .common import yield_csv_rows
+from kep.io import load_spec, yield_csv_rows
 
 UNKNOWN_LABELS = ["unknown_var", "unknown_unit"]
 # may do - UNKNOWN_LABELS[0] where "unknown_var" is used.
@@ -89,7 +83,7 @@ def get_labelled_rows_by_segment(raw_data_file, yaml_spec_file, yaml_cfg_file):
     return _label_raw_rows_by_segment(raw_rows, default_dicts, segment_specs)
 
 def _get_segment_specs_no_header_doc(segment_info_yaml_filename):
-
+    ### *** PICK FROM HERE *** MOVE THIS TO io.py
     # terrible inlining 
     def _chg(path, filename):
          folder = os.path.split(path)[0]

@@ -1,9 +1,28 @@
 # -*- coding: utf-8 -*-
 
 import yaml as ya
-from kep.io import docstring_to_file, load_spec
+from kep.io import docstring_to_file, load_spec, _get_yaml, yield_csv_rows
 
-# Header labels
+
+#------------------------------------------------------------------------------
+# General testing of docstring_to_file() and _get_yaml()            
+#------------------------------------------------------------------------------
+
+def test_io():
+    doc = """- Something looking like a yaml
+- Но обязательно с русским текстом
+---
+key1 : with two documents 
+key2 : который будет глючить с кодировкой."""
+    p = docstring_to_file(doc, "_test_yaml_doc.txt")
+    assert doc == "\n".join([x[0] for x in yield_csv_rows(p)])
+    y = _get_yaml(p)
+    assert y[0][0] == 'Something looking like a yaml'
+
+#------------------------------------------------------------------------------
+# YAML document structure testing            
+#------------------------------------------------------------------------------
+
 doc_header = """1.7. Инвестиции в основной капитал :
   - I
   - bln_rub 
@@ -52,7 +71,7 @@ def test_in_one_doc():
 
 ########### Test 3 - reading docs as a file
 def test_with_file():    
-    filename = "_yaml_spec_sample.txt"
+    filename = "_test_yaml_spec_sample.txt"
     p = docstring_to_file(yaml_doc, filename)
     
     d1, d2 = load_spec(p)
@@ -60,6 +79,7 @@ def test_with_file():
     assert d2 == unit_dict
   
 if __name__ == "__main__":
+    test_io()
     test_individial_docs_and_dicts()
     test_in_one_doc()
     test_with_file()

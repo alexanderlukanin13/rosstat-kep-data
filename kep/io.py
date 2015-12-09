@@ -55,11 +55,14 @@ def yield_csv_rows(csv_filename):
 # Dump of test files in subfolder
 #------------------------------------------------------------------------------
 
-SUBFOLDER = "temp"
+# WARNING: always assume we are in parent direcory of 'kep'
+SUBFOLDER = "kep//test//temp"
 
-def docstring_to_file(docstring, filename, subfolder = SUBFOLDER):
-    #path = os.path.join(subfolder, filename)
-    path = filename
+def docstring_to_file(docstring, filename):
+    if os.path.exists(SUBFOLDER):
+        path = os.path.join(SUBFOLDER, filename)
+    else:
+        path = filename
     with w_open(path) as f:
         f.write(docstring)
     return path
@@ -100,22 +103,4 @@ def _get_safe_yaml(filename):
     except:
         raise Exception ("Error parsing YAML file: " + filename)
 
-#------------------------------------------------------------------------------
-# Testing            
-#------------------------------------------------------------------------------
 
-def test_io():
-    doc = """- Something looking like a yaml
-- Но обязательно с русским текстом
----
-key1 : with two documents 
-key2 : который будет глючить с кодировкой."""
-    p = docstring_to_file(doc, "doc.txt")
-    assert doc == "\n".join([x[0] for x in yield_csv_rows(p)])
-    y = _get_yaml(p)
-    assert y[0][0] == 'Something looking like a yaml'
-    
-#------------------------------------------------------------------------------
-            
-if __name__ == "__main__":
-    test_io()

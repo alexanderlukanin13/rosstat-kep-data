@@ -15,10 +15,10 @@ def test_io():
 key1 : with two documents
 key2 : который будет глючить с кодировкой."""
     p = docstring_to_file(doc, "_test_yaml_doc.txt")
+
     assert doc == "\n".join([x[0] for x in yield_csv_rows(p)])
     y = _get_yaml(p)
     assert y[0][0] == 'Something looking like a yaml'
-    print("*" * 100)
 
     # Cleanup at the end
     os.remove("_test_yaml_doc.txt")
@@ -40,6 +40,32 @@ key2 : который будет глючить с кодировкой."""
     assert y[0][0] == 'Something looking like a yaml'
 
     # Gets removed automatically
+
+import pytest
+
+@pytest.yield_fixture
+def yaml_docfile():
+    # Create resource
+    doc = """- Something looking like a yaml
+- Но обязательно с русским текстом
+---
+key1 : with two documents
+key2 : который будет глючить с кодировкой."""
+
+    p = docstring_to_file(doc, "_test_yaml_doc.txt")
+
+    # Execute the test passing this tuple as yaml_docfile
+    yield (p, doc)
+
+    # Cleanup resource
+    os.remove("_test_yaml_doc.txt")
+
+def test_io_fixture(yaml_docfile):
+    p, doc = yaml_docfile
+
+    assert doc == "\n".join([x[0] for x in yield_csv_rows(p)])
+    y = _get_yaml(p)
+    assert y[0][0] == 'Something looking like a yaml'
 
 #------------------------------------------------------------------------------
 # YAML document structure testing

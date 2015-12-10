@@ -1,32 +1,54 @@
 # -*- coding: utf-8 -*-
-
+import os
 import yaml as ya
 from kep.io import docstring_to_file, load_spec, _get_yaml, yield_csv_rows
 
 
 #------------------------------------------------------------------------------
-# General testing of docstring_to_file() and _get_yaml()            
+# General testing of docstring_to_file() and _get_yaml()
 #------------------------------------------------------------------------------
 
 def test_io():
     doc = """- Something looking like a yaml
 - Но обязательно с русским текстом
 ---
-key1 : with two documents 
+key1 : with two documents
 key2 : который будет глючить с кодировкой."""
     p = docstring_to_file(doc, "_test_yaml_doc.txt")
     assert doc == "\n".join([x[0] for x in yield_csv_rows(p)])
     y = _get_yaml(p)
     assert y[0][0] == 'Something looking like a yaml'
+    print("*" * 100)
+
+    # Cleanup at the end
+    os.remove("_test_yaml_doc.txt")
+
+
+def test_io_tmpdir(tmpdir):
+    doc = """- Something looking like a yaml
+- Но обязательно с русским текстом
+---
+key1 : with two documents
+key2 : который будет глючить с кодировкой."""
+    p = tmpdir.mkdir("test_dir").join("_test_yaml_doc.txt")
+    p.write(doc)
+
+    # To obtain actual path -- use str(p)
+    assert doc == "\n".join([x[0] for x in yield_csv_rows(str(p))])
+
+    y = _get_yaml(str(p))
+    assert y[0][0] == 'Something looking like a yaml'
+
+    # Gets removed automatically
 
 #------------------------------------------------------------------------------
-# YAML document structure testing            
+# YAML document structure testing
 #------------------------------------------------------------------------------
 
 doc_header = """1.7. Инвестиции в основной капитал :
   - I
-  - bln_rub 
-1.14. Объем платных услуг населению : 
+  - bln_rub
+1.14. Объем платных услуг населению :
   - Uslugi
   - bln_rub"""
 
@@ -37,18 +59,18 @@ header_dict = {
 
 # Unit labels
 doc_unit  = """в % к соответствующему периоду предыдущего года : yoy
-в % к предыдущему периоду : rog""" 
+в % к предыдущему периоду : rog"""
 unit_dict =    {
 "в % к соответствующему периоду предыдущего года": 'yoy',
 "в % к предыдущему периоду": 'rog'
 }
- 
+
 # Special readers for some variables
-doc_reader = "CPI : read12" 
+doc_reader = "CPI : read12"
 reader_dict = {'CPI' : 'read12'}
 
 ########### Test 1 - reading docs individually
-docs = [doc_reader, doc_unit, doc_header] 
+docs = [doc_reader, doc_unit, doc_header]
 dicts = [reader_dict, unit_dict, header_dict]
 
 def test_individial_docs_and_dicts():
@@ -70,14 +92,14 @@ def test_in_one_doc():
     assert spec[2] == header_dict
 
 ########### Test 3 - reading docs as a file
-def test_with_file():    
+def test_with_file():
     filename = "_test_yaml_spec_sample.txt"
     p = docstring_to_file(yaml_doc, filename)
-    
+
     d1, d2 = load_spec(p)
     assert d1 == header_dict
     assert d2 == unit_dict
-  
+
 if __name__ == "__main__":
     test_io()
     test_individial_docs_and_dicts()

@@ -6,8 +6,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-
-from save import get_dfm   
+from kep.selector.save import get_dfm   
 
 matplotlib.style.use('ggplot')
 
@@ -15,9 +14,9 @@ matplotlib.style.use('ggplot')
 A4_SIZE_PORTRAIT = [8.27, 11.7]
 TITLE_FONT_SIZE = 12
 
-PDF_FILE   = os.path.join('output', 'monthly.pdf')
-MD_PATH    = os.path.join('output', 'images.md')
-PNG_FOLDER = os.path.join("output", "png")
+PDF_FILE   = 'output/monthly.pdf'
+MD_PATH    = 'output/images.md'
+PNG_FOLDER = 'output/png'
 
 #####################################################################################################
 # Entry points
@@ -129,16 +128,9 @@ def generate_md(df):
             line_vars = var_names[row_start:row_start+IMAGES_PER_LINE]
             f.write(' '.join('![](png/%s.png)' % var_name for var_name in line_vars) + '\n')
 	
-        
-if __name__ == "__main__":
-
-    # sample plot
-	#from end_user import get_ts
-    #ts = get_ts('IND_PROD_yoy', "m", "1999-01")    
-    #one_plot(ts)  
-    #plt.close() 
-      
-    print("Reading data...")
+def write_plots():
+    """Write monthly graphs as *.png plots with markdown showcase file and as a PDF file."""       
+    print("Reading stored data...")
     df = get_dfm()
     
     # png images    
@@ -146,7 +138,7 @@ if __name__ == "__main__":
     write_png_pictures(df)   
     
     # md file
-    print("Writing .md file with images...")
+    print("Writing markdown (.md) showcase file with images...")
     generate_md(df)
     
     # PDF output
@@ -154,5 +146,17 @@ if __name__ == "__main__":
     write_monthly_pdf()
     
     print("Done.")
+    
+def sample_plot():
+    # sample plot
+	#from end_user import get_ts
+    #ts = get_ts('IND_PROD_yoy', "m", "1999-01")    
+    #one_plot(ts)  
+    #plt.close()
+	pass
+    
+if __name__ == "__main__":    
+	write_plots()
+	
     
 # NOTE: с меньшим количеством лет ориентация подписей по оси х некрасивая +  на англ. яз.

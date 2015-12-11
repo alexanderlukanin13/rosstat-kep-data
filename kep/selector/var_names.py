@@ -6,23 +6,18 @@ import itertools
 import pandas as pd
 #import tabulate
 
-from common import docstring_to_file
-
+from kep.io.common import docstring_to_file, get_filenames
 # NOTE: this function is a direct query to all unique labels
-from database import get_unique_labels
+from kep.database.db import get_unique_labels
+from kep.io.specification import load_spec
 
 FILLER = "<...>"
 
-
 # ----------------------------------------------------------------------------
-
-from common import get_filenames
-data_folder = "../data/ind09/"
+# Not good:
+data_folder = "data/ind09/"
 csv, spec, cfg = get_filenames(data_folder)
-
-from load_spec import load_spec
 default_dicts = load_spec(spec)
-
 # ----------------------------------------------------------------------------
 
 def get_var_abbr(name):
@@ -115,6 +110,7 @@ def get_table():
     return pure_tabulate(table)
     #return tabulate.tabulate(table, header, tablefmt="pipe") 
 
+# TODO: must see how file gets to root 'output' folder
 def dump_var_list_explained():
     """Writes table of variables (label, desciption, unit) to src/output/varnames.md"""    
     tab_table = get_table()

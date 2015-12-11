@@ -4,16 +4,12 @@ from datetime import date, datetime
 from calendar import monthrange
 import shutil
 
-try:
-   from .database import read_dfs   
-   from .var_names import get_var_table_as_dataframe
-except (ImportError, SystemError):
-   from database import read_dfs   
-   from var_names import get_var_table_as_dataframe
+from kep.database.db import read_dfs   
+from kep.selector.var_names import get_var_table_as_dataframe
 
 XLSX_FILE     = "output//kep.xlsx"
 XLS_FILE      = "output//kep.xls"
-ANNUAL_CSV    = "output//data_annual.txt"	
+ANNUAL_CSV    = "output//data_annual.txt"
 QUARTERLY_CSV = "output//data_qtr.txt"
 MONTHLY_CSV   = "output//data_monthly.txt"
 

@@ -6,10 +6,12 @@ import itertools
 import pandas as pd
 #import tabulate
 
-from kep.io.common import docstring_to_file, get_filenames
+from kep.io.common import write_file, get_filenames
+from kep.io.specification import load_spec
 # NOTE: this function is a direct query to all unique labels
 from kep.database.db import get_unique_labels
-from kep.io.specification import load_spec
+
+
 
 FILLER = "<...>"
 
@@ -114,7 +116,7 @@ def get_table():
 def dump_var_list_explained():
     """Writes table of variables (label, desciption, unit) to src/output/varnames.md"""    
     tab_table = get_table()
-    docstring_to_file(tab_table, "varnames.md", "output")
+    write_file(tab_table, "output/varnames.md")
 
 if __name__ == "__main__":
     print(default_dicts)

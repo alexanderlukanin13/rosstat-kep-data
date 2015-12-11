@@ -8,7 +8,14 @@ from kep.converter.word import make_csv
 from kep.parser.csv2db import import_csv
 
 # Save data from database to CSV and Excel xls(x)
+# TODO - rename selector
 from kep.selector.save import db_dump
+
+# Graphs
+from kep.plots.plots import write_plots
+
+# Operate with variable names
+from kep.selector.var_names import dump_var_list_explained
 
 
 if __name__ == "__main__":
@@ -21,8 +28,13 @@ if __name__ == "__main__":
     # Parse and upload CSV file to database
     # import_csv(data_folder)
     
-    # Save data from database to CSV and Excel xls(x)
-    db_dump()
+    # Export times series from database to CSV files and Excel xls(x)
+    # db_dump()
     
-    # must restore     
-    # dump_var_list_explained()
+	# Create and save PDF and *.png graphs
+	# TODO-CHECK: are files in root and readme.md updated?
+	# write_plots()
+	
+    # Writes list of variables
+    dump_var_list_explained()
+	

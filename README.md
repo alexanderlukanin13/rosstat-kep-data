@@ -53,17 +53,20 @@ dfm = get_df(month_varnames)
 ```python
 import kep 
 data_folder = "data/2015/ind10"
-# must stop if (1) no Word installed, (2)  
-make_csv()
+# TODO:
+# must stop if (1) no Word installed, (2) CSV already exists 
+kep.make_csv()
 #
-import_csv()
+kep.import_csv()
 # save data and variable list to Excel, CSV files, write plots to PDF and *.png 
-dump_db()
+kep.dump_db()
 ```
 
 
-### Структура программы (program flow)
+### Структура программы
 ```
+PROGRAM FLOW
+
 1. Converter
 doc - > raw csv
 (word.py)

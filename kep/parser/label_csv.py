@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 """Read raw CSV file and emit labelled rows based on specification.
-  
-Entry point: 
 
-    get_labelled_rows(raw_data_file, spec_file = None, cfg_file = None)  
-      raw_data_file - raw csv file with data
-      spec_file     - header and unit definitions
-      config_file   - segnment information: start rows, end rows, spec files by segment"""
+get_labelled_rows(raw_data_file, spec_file = None, cfg_file = None) 
+    # Returns a list of labelled rows    
+    #  raw_data_file - raw csv file with data
+    #  spec_file     - header and unit definitions
+    #  config_file   - segment information: start rows, end rows, spec files for each segment"""
+
 
 import os
-from kep.io import load_spec, yield_csv_rows
+from kep.io.common import yield_csv_rows
+from kep.io.specification import load_spec, load_cfg
 
 UNKNOWN_LABELS = ["unknown_var", "unknown_unit"]
-# may do - UNKNOWN_LABELS[0] where "unknown_var" is used.
 
 #______________________________________________________________________________
 #
@@ -35,6 +35,11 @@ UNKNOWN_LABELS = ["unknown_var", "unknown_unit"]
 #------------------------------------------------------------------------------
 
 def get_labelled_rows(raw_data_file, spec_file, cfg_file = None):
+    """ Returns a list of labelled rows    
+       raw_data_file - raw csv file with data
+       spec_file     - header and unit definitions
+       config_file   - segment information: start rows, end rows, spec files for each segment"""
+
     #  the difference between calls is cfg file     
     if cfg_file is not None:
         return get_labelled_rows_by_segment(raw_data_file, spec_file, cfg_file)
@@ -67,7 +72,7 @@ def yield_all_rows_with_labels(incoming_rows, spec_dicts):
                 labels = adjust_labels(row[0], labels, spec_dicts)
                 yield row, labels, None
             else:
-                # data row, assign label and yield                
+                # data row, use current label and yield                
                 yield row, labels, row
         else:
             yield row, None, None
@@ -79,25 +84,13 @@ def yield_all_rows_with_labels(incoming_rows, spec_dicts):
 def get_labelled_rows_by_segment(raw_data_file, yaml_spec_file, yaml_cfg_file):
     raw_rows = list(yield_csv_rows(raw_data_file))     
     default_dicts = load_spec(yaml_spec_file)
-    segment_specs = _get_segment_specs_no_header_doc(yaml_cfg_file)
-    return _label_raw_rows_by_segment(raw_rows, default_dicts, segment_specs)
-
-def _get_segment_specs_no_header_doc(segment_info_yaml_filename):
-    ### *** PICK FROM HERE *** MOVE THIS TO io.py
-    # terrible inlining 
-    def _chg(path, filename):
-         folder = os.path.split(path)[0]
-         return os.path.join(folder, filename)
-    assert _chg("temp\\_config.txt", "new.txt") == 'temp\\new.txt'
-    # end
-    yaml = _get_safe_yaml(segment_info_yaml_filename)
-    return [[start_line, end_line, load_spec(_chg(segment_info_yaml_filename,specfile))]
-            for start_line, end_line, specfile in yaml]
+    segment_specs = load_cfg(yaml_cfg_file)
+    return label_raw_rows_by_segment(raw_rows, default_dicts, segment_specs)
 
 #------------------------------------------------------------------------------
 #    Read segments from config file
 #------------------------------------------------------------------------------
-def _label_raw_rows_by_segment(raw_rows, default_dicts, segment_specs):
+def label_raw_rows_by_segment(raw_rows, default_dicts, segment_specs):
     """Returns list of labelled rows, based on default specification and segment info."""
     labelled_rows = []
     labels = UNKNOWN_LABELS[:]    
@@ -186,7 +179,6 @@ def _adjust_labels(line, cur_labels, dict_headline, dict_support):
        # unknown var, reset labels
        labels = UNKNOWN_LABELS[:]
     return labels    
-                
 
 def is_year(s):    
     # "20141)"    
@@ -196,7 +188,6 @@ def is_year(s):
         return True        
     except ValueError:
         return False
-
 
 # -----------------------------------------------------------------------------
 #  Adjust labels - extract labels from text 
@@ -223,43 +214,4 @@ def sf_start(text, pat):
    return text.strip().startswith(pat)
 
 def sf_anywhere(text, pat):
-   return pat in text   
-
-# --------------------------------------------------------------
-# Testing functions
-
-def print_rows(list_):
-    # print("Printing list by row in compact form:")
-    for row in list_:
-         print(" ".join(row[0:6]) + ' ... ' + row[-1])
-
-def test_label_csv1():
-    from hardcoded import init_raw_csv_file, init_main_yaml, PARSED_RAW_FILE_AS_LIST
-    raw_data_file = init_raw_csv_file()        
-    SPEC_FILE = init_main_yaml()    
-    labelled_rows_as_list = get_labelled_rows_no_segments(raw_data_file, SPEC_FILE)
-    assert labelled_rows_as_list == PARSED_RAW_FILE_AS_LIST
-
-def test_segment_specs():
-    from hardcoded import REF_SEGMENT_SPEC, init_config_yaml
-    CFG_FILE = init_config_yaml()
-    segment_specs = _get_segment_specs_no_header_doc(CFG_FILE)
-    assert segment_specs == REF_SEGMENT_SPEC
-
-def test_label_csv2():
-    from hardcoded import PARSED_RAW_FILE_AS_LIST
-    labelled_rows = get_test_labelled_rows()
-    assert PARSED_RAW_FILE_AS_LIST == labelled_rows
-    
-def get_test_labelled_rows():
-    from hardcoded import init_config_yaml, init_raw_csv_file, init_main_yaml
-    RAW_FILE = init_raw_csv_file()        
-    SPEC_FILE = init_main_yaml()    
-    CFG_FILE = init_config_yaml()
-    return list(get_labelled_rows(RAW_FILE, spec_file = SPEC_FILE, 
-                                             cfg_file = CFG_FILE))    
-
-if __name__ == "__main__":
-    test_label_csv1()
-    test_segment_specs()
-    test_label_csv2()   
+   return pat in text

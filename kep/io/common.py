@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
-"""CSV input/output."""
+"""CSV input/output, docstring to temp file and filenames."""
 
 import csv
 import os
 
+#------------------------------------------------------------------------------
+#  Filename conventions 
+#------------------------------------------------------------------------------
 
 def get_filenames(data_folder):
+    """Filename conventions"""
+    # TODO: also check these files exist
     csv  = os.path.join(data_folder, "tab.csv")
     spec = os.path.join(data_folder, "tab_spec.txt")
     cfg =  os.path.join(data_folder, "tab_cfg.txt")
     return csv, spec, cfg
  
-#def infolder(folder, file):
-#   path = os.path.join(folder, file)
-#   if os.path.isfile(path):
-#       return path 
-#   else:
-#       raise FileNotFoundError(path)
-
 #------------------------------------------------------------------------------
 #  Root io functions with encoding 
 #------------------------------------------------------------------------------
+
 ENCODING = 'utf8' #'cp1251'
        
 def w_open(file):
@@ -52,7 +51,7 @@ def yield_csv_rows(csv_filename):
 
             
 #------------------------------------------------------------------------------
-# Dump of test files in subfolder
+# Dump files in test subfolder
 #------------------------------------------------------------------------------
 
 # WARNING: always assume we are in parent direcory of 'kep'
@@ -67,40 +66,9 @@ def docstring_to_file(docstring, filename):
         f.write(docstring)
     return path
 
-#------------------------------------------------------------------------------
-# YAML import 
-#------------------------------------------------------------------------------
-
-import yaml
-
-def test_yaml():
-    print(85)
+def delete_file(path):
+    os.remove(path) 
     
-def load_spec(filename):
-    """Returns specification  dictionaries. 
-    
-       YAML file structure (3 sections):    
-        # readers (very little lines)
-        -----
-        # units (a bit more lines)
-        -----
-        # headlines (many lines)"""
-    spec = _get_safe_yaml(filename)     
-    # depreciated_reader_dict = spec[0]    
-    unit_dict = spec[1]
-    headline_dict = spec[2]
-    return headline_dict, unit_dict
 
-def _get_yaml(filename):
-    with r_open(filename) as file:
-        return list(yaml.load_all(file))   
-
-def _get_safe_yaml(filename):        
-    try:
-        return _get_yaml(filename)
-    except FileNotFoundError:
-        raise FileNotFoundError ("YAML file not found: " + filename)
-    except:
-        raise Exception ("Error parsing YAML file: " + filename)
 
 

@@ -25,6 +25,7 @@ VARNAMES_FILE = os.path.join(OUTPUT_DIR, 'varnames.md')
 
 # temp folder for testing
 SUBFOLDER = os.path.join(PACKAGE_FOLDER, 'test', 'temp')
+TEST_TEMP_FOLDER = os.path.join(PACKAGE_FOLDER, 'test', 'temp')
 
 # inspection files (not used now)
 INSPECTION_FOLDER = os.path.join('kep', 'inspection')
